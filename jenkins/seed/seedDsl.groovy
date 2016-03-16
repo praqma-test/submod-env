@@ -18,6 +18,10 @@ job("${repo}-build") {
     )
   }
 
+  triggers {
+    scm('H/2 * * * *')
+  }
+
   steps {
     shell('./build.sh')
   }
