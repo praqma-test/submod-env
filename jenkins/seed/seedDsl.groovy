@@ -26,6 +26,8 @@ job("${repo}-build") {
     archiveArtifacts {
       pattern('main')
     }
+
+    downstream("${repo}-test")
   }
 }
 
@@ -38,6 +40,10 @@ job("${repo}-test") {
     }
 
     shell('./main $BUILD_NUMBER')
+  }
+
+  publishers {
+    downstream("${repo}-release")
   }
 }
 
