@@ -76,7 +76,7 @@ job("${repo}-release") {
 buildPipelineView('Pipeline') {
   title('submod-red pipeline')
   displayedBuilds(50)
-  selectedJob('submod-red')
+  selectedJob("${repo}-build")
   alwaysAllowManualTrigger()
   showPipelineParametersInHeaders()
   showPipelineParameters()
