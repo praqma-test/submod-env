@@ -2,7 +2,15 @@ job('submod-red') {
   description('Build the submod-red project')
 
   scm {
-    github('praqma-test/submod-red')
+    github('praqma-test/submod-red',
+      { scm ->
+        scm / 'extensions' / 'hudson.plugins.git.extensions.impl.SubmoduleOption' {
+          disableSubmodules false
+          recursiveSubmodules true
+          trackingSubmodules false
+        }
+      }
+    )
   }
 
   steps {
