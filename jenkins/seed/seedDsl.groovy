@@ -74,6 +74,8 @@ job("${repo}-release") {
 
   steps {
     shell('''\
+    git checkout feature/1
+    git checkout master
     git merge --ff-only origin feature/1
     git push
     '''.stripIndent())
