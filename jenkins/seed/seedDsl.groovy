@@ -43,7 +43,10 @@ job("${repo}-test") {
       includePatterns('main')
     }
 
-    shell('./main $BUILD_NUMBER')
+    shell('''\
+    chmod a+x main
+    ./main $BUILD_NUMBER
+    '''.stripIndent())
   }
 
   publishers {
@@ -71,7 +74,7 @@ job("${repo}-release") {
 
   steps {
     shell('''\
-    git pull origin feature/1
+    git merge --ff-only origin feature/1
     git push
     '''.stripIndent())
   }
