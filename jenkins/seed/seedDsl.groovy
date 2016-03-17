@@ -72,13 +72,20 @@ job("${repo}-release") {
     )
   }
 
+  /** Merge feature branch into master. */
   steps {
     shell('''\
-    git checkout feature/1
-    git checkout master
-    git merge --ff-only origin feature/1
-    git push
+    git fetch origin feature/1
+    git merge --ff-only feature/1
     '''.stripIndent())
+  }
+
+  /** Push to master. */
+  publishers {
+    git {
+      pushOnlyIfSuccess()
+      branch("origin", "master")
+    }
   }
 }
 
