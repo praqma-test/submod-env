@@ -2,6 +2,8 @@
 repo = 'submod-red'
 
 buildFlowJob("${repo}-build-flow") {
+  buildNeedsWorkspace()
+
   buildFlow("""\
   parallel (
     {
@@ -18,7 +20,6 @@ buildFlowJob("${repo}-build-flow") {
   build('${repo}-test')
   build('${repo}-release')
   """.stripIndent())
-
 }
 
 job("lower-letters-test") {
