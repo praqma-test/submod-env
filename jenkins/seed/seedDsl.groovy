@@ -54,6 +54,7 @@ job("lower-letters-test") {
   }
 
   steps {
+    shell('git merge master')
     shell('./test.sh')
   }
 
@@ -104,6 +105,7 @@ job("capital-letters-test") {
   }
 
   steps {
+    shell('git merge master')
     shell('./test.sh')
   }
 
@@ -160,6 +162,7 @@ job("${repo}-build") {
   }
 
   steps {
+    shell('git merge master')
     shell('./build.sh')
   }
 
