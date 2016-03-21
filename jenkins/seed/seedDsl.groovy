@@ -16,9 +16,6 @@ buildFlowJob("${repo}-build-flow") {
   build('${repo}-release')
   """.stripIndent())
 
-  triggers {
-    scm('H/2 * * * *')
-  }
 }
 
 job("lower-letters-test") {
@@ -31,6 +28,21 @@ job("lower-letters-test") {
             name 'feature/1'
       }
     }
+  }
+
+  steps {
+    shell('''\
+    #!/bin/bash -x
+    cat text.txt | grep [A-Z]
+    if [ $? -eq 0 ]
+    then
+      echo Failure: Found uppercase letters
+      exit 1
+    else
+      echo Test passed
+      exit 0
+    fi
+    '''.stripIndent())
   }
 
 }
@@ -109,10 +121,6 @@ job("${repo}-test") {
     ./main $BUILD_NUMBER
     '''.stripIndent())
   }
-
-  publishers {
-    downstream("${repo}-release")
-  }
 }
 
 job("${repo}-release") {
@@ -150,15 +158,4 @@ job("${repo}-release") {
       branch("origin", "master")
     }
   }
-}
-
-buildPipelineView('Pipeline') {
-  title('submod-red pipeline')
-  displayedBuilds(50)
-  selectedJob("${repo}-build")
-  alwaysAllowManualTrigger()
-  showPipelineParametersInHeaders()
-  showPipelineParameters()
-  showPipelineDefinitionHeader()
-  refreshFrequency(60)
 }

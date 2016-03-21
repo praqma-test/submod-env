@@ -17,6 +17,9 @@ build-pipeline-plugin:1.5.1
 parameterized-trigger:2.30
 jquery:1.11.2-0
 
-# Various, without dependencies
+# Build flow
 build-flow-plugin:0.18
+buildgraph-view:1.1.1
+
+# Various, without dependencies
 copyartifact:1.37
