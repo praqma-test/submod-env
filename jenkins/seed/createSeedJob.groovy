@@ -46,5 +46,6 @@ project.getBuildersList().add(jobDslBuildStep)
 project.save()
 Jenkins.instance.reload()
 
-job = Jenkins.instance.getJob(jobName)
-Hudson.instance.queue.schedule(job)
+// Disable running the seed job as long as GitHub push credentials are not automated
+//job = Jenkins.instance.getJob(jobName)
+//Hudson.instance.queue.schedule(job)
