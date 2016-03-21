@@ -165,7 +165,7 @@ job("${repo}-build") {
 
   publishers {
     archiveArtifacts {
-      pattern('main')
+      pattern('archive.tgz')
     }
   }
 }
@@ -175,13 +175,11 @@ job("${repo}-test") {
 
   steps {
     copyArtifacts("${repo}-build") {
-      includePatterns('main')
+      includePatterns('archive.tgz')
     }
 
-    shell('''\
-    chmod a+x main
-    ./main $BUILD_NUMBER
-    '''.stripIndent())
+    // Just test that it looks like a tar archive
+    shell('tar -tvf archive.tgz')
   }
 }
 
