@@ -2,9 +2,9 @@
 job-dsl:1.44
 
 # Git plugins and dependencies
-github:1.17.1
+github:1.18.1
 github-api:1.72.1
-git:2.4.2
+git:2.4.3
 git-client:1.19.6
 credentials:1.25
 icon-shim:2.0.3
@@ -17,4 +17,6 @@ build-pipeline-plugin:1.5.1
 parameterized-trigger:2.30
 jquery:1.11.2-0
 
+# Various, without dependencies
+build-flow-plugin:0.18
 copyartifact:1.37

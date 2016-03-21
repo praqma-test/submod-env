@@ -1,4 +1,71 @@
+
 repo = 'submod-red'
+
+buildFlowJob("${repo}-build-flow") {
+  buildFlow("""\
+  parallel (
+    {
+      build('lower-letters-test')
+      build('lower-letters-release')
+    },
+    // TODO: Other submodules
+  )
+
+  build('${repo}-build')
+  build('${repo}-test')
+  build('${repo}-release')
+  """.stripIndent())
+
+  triggers {
+    scm('H/2 * * * *')
+  }
+}
+
+job("lower-letters-test") {
+  description('Test lower-letters submodule')
+
+  scm {
+    github('praqma-test/lower-letters')
+    { scm ->
+      scm / branches / 'hudson.plugins.git.BranchSpec' {
+            name 'feature/1'
+      }
+    }
+  }
+
+}
+
+job("lower-letters-release") {
+  description('Merge lower-letters ready branch into master')
+
+  scm {
+    github('praqma-test/lower-letters',
+      { scm ->
+        scm / branches / 'hudson.plugins.git.BranchSpec' {
+             	name 'master'
+        }
+      }
+    )
+  }
+
+  /** Merge feature branch into master. */
+  steps {
+    shell('''\
+    git checkout feature/1
+    git pull
+    git checkout master
+    git merge --ff-only feature/1
+    '''.stripIndent())
+  }
+
+  /** Push to master. */
+  publishers {
+    git {
+      pushOnlyIfSuccess()
+      branch('origin', 'master')
+    }
+  }
+}
 
 job("${repo}-build") {
   description('Check out feature branch and build source code')
@@ -18,10 +85,6 @@ job("${repo}-build") {
     )
   }
 
-  triggers {
-    scm('H/2 * * * *')
-  }
-
   steps {
     shell('./build.sh')
   }
@@ -30,8 +93,6 @@ job("${repo}-build") {
     archiveArtifacts {
       pattern('main')
     }
-
-    downstream("${repo}-test")
   }
 }
 
