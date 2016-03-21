@@ -54,7 +54,12 @@ job("lower-letters-test") {
   }
 
   steps {
-    shell('git merge master')
+    shell('''\
+      git checkout master
+      git checkout feature/1
+      git merge master
+    '''.stripIndent())
+
     shell('./test.sh')
   }
 
@@ -105,7 +110,12 @@ job("capital-letters-test") {
   }
 
   steps {
-    shell('git merge master')
+    shell('''\
+      git checkout master
+      git checkout feature/1
+      git merge master
+    '''.stripIndent())
+
     shell('./test.sh')
   }
 
@@ -162,7 +172,12 @@ job("${repo}-build") {
   }
 
   steps {
-    shell('git merge master')
+    shell('''\
+      git checkout master
+      git checkout feature/1
+      git merge master
+    '''.stripIndent())
+
     shell('./build.sh')
   }
 
