@@ -8,7 +8,10 @@ buildFlowJob("${repo}-build-flow") {
       build('lower-letters-test')
       build('lower-letters-release')
     },
-    // TODO: Other submodules
+    {
+      build('capital-letters-test')
+      build('capital-letters-release')
+    },
   )
 
   build('${repo}-build')
@@ -41,6 +44,56 @@ job("lower-letters-release") {
 
   scm {
     github('praqma-test/lower-letters',
+      { scm ->
+        scm / branches / 'hudson.plugins.git.BranchSpec' {
+             	name 'master'
+        }
+      }
+    )
+  }
+
+  /** Merge feature branch into master. */
+  steps {
+    shell('''\
+    git checkout feature/1
+    git pull
+    git checkout master
+    git merge --ff-only feature/1
+    '''.stripIndent())
+  }
+
+  /** Push to master. */
+  publishers {
+    git {
+      pushOnlyIfSuccess()
+      branch('origin', 'master')
+    }
+  }
+}
+
+job("capital-letters-test") {
+  description('Test capital-letters submodule')
+
+  scm {
+    github('praqma-test/capital-letters')
+    { scm ->
+      scm / branches / 'hudson.plugins.git.BranchSpec' {
+            name 'feature/1'
+      }
+    }
+  }
+
+  steps {
+    shell('./test.sh')
+  }
+
+}
+
+job("capital-letters-release") {
+  description('Merge capital-letters ready branch into master')
+
+  scm {
+    github('praqma-test/capital-letters',
       { scm ->
         scm / branches / 'hudson.plugins.git.BranchSpec' {
              	name 'master'
