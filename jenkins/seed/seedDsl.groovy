@@ -2,7 +2,7 @@
 repo = 'submod-red'
 
 buildFlowJob("${repo}-build-flow") {
-  buildNeedsWorkspace()
+  buildNeedsWorkspace() // In order to detect SCM changes
 
   buildFlow("""\
   parallel (
@@ -20,6 +20,25 @@ buildFlowJob("${repo}-build-flow") {
   build('${repo}-test')
   build('${repo}-release')
   """.stripIndent())
+
+  scm {
+    github('praqma-test/submod-red',
+      { scm ->
+        scm / branches / 'hudson.plugins.git.BranchSpec' {
+          name 'feature/1'
+        }
+        scm / 'extensions' / 'hudson.plugins.git.extensions.impl.SubmoduleOption' {
+          disableSubmodules false
+          recursiveSubmodules true
+          trackingSubmodules false
+        }
+      }
+    )
+  }
+
+  triggers {
+    scm('H/2 * * * *')
+  }
 }
 
 job("lower-letters-test") {
@@ -29,7 +48,7 @@ job("lower-letters-test") {
     github('praqma-test/lower-letters')
     { scm ->
       scm / branches / 'hudson.plugins.git.BranchSpec' {
-            name 'feature/1'
+        name 'feature/1'
       }
     }
   }
@@ -47,7 +66,7 @@ job("lower-letters-release") {
     github('praqma-test/lower-letters',
       { scm ->
         scm / branches / 'hudson.plugins.git.BranchSpec' {
-             	name 'master'
+          name 'master'
         }
       }
     )
@@ -79,7 +98,7 @@ job("capital-letters-test") {
     github('praqma-test/capital-letters')
     { scm ->
       scm / branches / 'hudson.plugins.git.BranchSpec' {
-            name 'feature/1'
+        name 'feature/1'
       }
     }
   }
@@ -97,7 +116,7 @@ job("capital-letters-release") {
     github('praqma-test/capital-letters',
       { scm ->
         scm / branches / 'hudson.plugins.git.BranchSpec' {
-             	name 'master'
+          name 'master'
         }
       }
     )
@@ -129,7 +148,7 @@ job("${repo}-build") {
     github('praqma-test/submod-red',
       { scm ->
         scm / branches / 'hudson.plugins.git.BranchSpec' {
-             	name 'feature/1'
+          name 'feature/1'
         }
         scm / 'extensions' / 'hudson.plugins.git.extensions.impl.SubmoduleOption' {
           disableSubmodules false
@@ -173,7 +192,7 @@ job("${repo}-release") {
     github('praqma-test/submod-red',
       { scm ->
         scm / branches / 'hudson.plugins.git.BranchSpec' {
-             	name 'master'
+          name 'master'
         }
         scm / 'extensions' / 'hudson.plugins.git.extensions.impl.SubmoduleOption' {
           disableSubmodules false
