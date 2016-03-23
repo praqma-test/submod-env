@@ -48,7 +48,7 @@ job("lower-letters-test") {
     github('praqma-test/lower-letters')
     { scm ->
       scm / branches / 'hudson.plugins.git.BranchSpec' {
-        name 'feature/1'
+        name 'refs/heads/feature/1'
       }
     }
   }
@@ -104,7 +104,7 @@ job("capital-letters-test") {
     github('praqma-test/capital-letters')
     { scm ->
       scm / branches / 'hudson.plugins.git.BranchSpec' {
-        name 'feature/1'
+        name 'refs/heads/feature/1'
       }
     }
   }
@@ -160,7 +160,7 @@ job("${repo}-build") {
     github('praqma-test/submod-red',
       { scm ->
         scm / branches / 'hudson.plugins.git.BranchSpec' {
-          name 'feature/1'
+          name 'refs/heads/feature/1'
         }
         scm / 'extensions' / 'hudson.plugins.git.extensions.impl.SubmoduleOption' {
           disableSubmodules false
