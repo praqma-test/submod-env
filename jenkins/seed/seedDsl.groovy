@@ -1,4 +1,6 @@
 
+import utilities.Submodule
+
 repo = 'submod-red'
 
 buildFlowJob("${repo}-build-flow") {
@@ -25,7 +27,7 @@ buildFlowJob("${repo}-build-flow") {
     github('praqma-test/submod-red',
       { scm ->
         scm / branches / 'hudson.plugins.git.BranchSpec' {
-          name 'feature/1'
+          name 'refs/heads/feature/1'
         }
         scm / 'extensions' / 'hudson.plugins.git.extensions.impl.SubmoduleOption' {
           disableSubmodules false
@@ -41,61 +43,13 @@ buildFlowJob("${repo}-build-flow") {
   }
 }
 
-job("lower-letters-test") {
-  description('Test lower-letters submodule')
-
-  scm {
-    github('praqma-test/lower-letters')
-    { scm ->
-      scm / branches / 'hudson.plugins.git.BranchSpec' {
-        name 'refs/heads/feature/1'
-      }
-    }
-  }
-
+Submodule.getTestJob(job('lower-letters-test'), 'praqma-test/lower-letters') {
   steps {
-    shell('''\
-      git checkout master
-      git checkout feature/1
-      git merge master
-    '''.stripIndent())
-
     shell('./test.sh')
   }
-
 }
 
-job("lower-letters-release") {
-  description('Merge lower-letters ready branch into master')
-
-  scm {
-    github('praqma-test/lower-letters',
-      { scm ->
-        scm / branches / 'hudson.plugins.git.BranchSpec' {
-          name 'master'
-        }
-      }
-    )
-  }
-
-  /** Merge feature branch into master. */
-  steps {
-    shell('''\
-    git checkout feature/1
-    git pull
-    git checkout master
-    git merge --ff-only feature/1
-    '''.stripIndent())
-  }
-
-  /** Push to master. */
-  publishers {
-    git {
-      pushOnlyIfSuccess()
-      branch('origin', 'master')
-    }
-  }
-}
+Submodule.getReleaseJob(job('lower-letters-release'), 'praqma-test/lower-letters')
 
 job("capital-letters-test") {
   description('Test capital-letters submodule')
@@ -196,8 +150,7 @@ job("${repo}-test") {
       includePatterns('archive.tgz')
     }
 
-    // Just test that it looks like a tar archive
-    shell('tar -tvf archive.tgz')
+    shell('./test.sh')
   }
 }
 
