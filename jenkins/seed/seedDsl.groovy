@@ -157,7 +157,7 @@ Superproject.getBuildJob(job("${superGreenRepo}-build"), "praqma-test/${superGre
 }
 Superproject.getTestJob(job("${superGreenRepo}-test"), "praqma-test/${superGreenRepo}") {
   steps {
-    copyArtifacts("${repo}-build") {
+    copyArtifacts("${superGreenRepo}-build") {
       includePatterns('archive.tgz')
     }
     shell('./test.sh')
