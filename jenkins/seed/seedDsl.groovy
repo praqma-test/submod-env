@@ -1,9 +1,12 @@
 
 import utilities.Submodule
+import utilities.Superproject
 
-repo = 'submod-red'
+/* The superprojects, located in praqma-test. */
+superRedRepo = 'super-red'
+superGreenRepo = 'super-green'
 
-buildFlowJob("${repo}-build-flow") {
+buildFlowJob("${superRedRepo}-build-flow") {
   buildNeedsWorkspace() // In order to detect SCM changes
 
   buildFlow("""\
@@ -18,13 +21,13 @@ buildFlowJob("${repo}-build-flow") {
     },
   )
 
-  build('${repo}-build')
-  build('${repo}-test')
-  build('${repo}-release')
+  build('${superRedRepo}-build')
+  build('${superRedRepo}-test')
+  build('${superRedRepo}-release')
   """.stripIndent())
 
   scm {
-    github('praqma-test/submod-red',
+    github("praqma-test/${superRedRepo}",
       { scm ->
         scm / branches / 'hudson.plugins.git.BranchSpec' {
           name 'refs/heads/feature/1'
@@ -57,12 +60,11 @@ submodules.each {
   Submodule.getReleaseJob(job("${it}-release"), "praqma-test/${it}")
 }
 
-
-job("${repo}-build") {
+job("${superRedRepo}-build") {
   description('Check out feature branch and build source code')
 
   scm {
-    github('praqma-test/submod-red',
+    github("praqma-test/${superRedRepo}",
       { scm ->
         scm / branches / 'hudson.plugins.git.BranchSpec' {
           name 'refs/heads/feature/1'
@@ -93,11 +95,11 @@ job("${repo}-build") {
   }
 }
 
-job("${repo}-test") {
+job("${superRedRepo}-test") {
   description('Run tests on the artifact from the build job')
 
   steps {
-    copyArtifacts("${repo}-build") {
+    copyArtifacts("${superRedRepo}-build") {
       includePatterns('archive.tgz')
     }
 
@@ -105,11 +107,11 @@ job("${repo}-test") {
   }
 }
 
-job("${repo}-release") {
+job("${superRedRepo}-release") {
   description('Check out master and merge feature branch into master')
 
   scm {
-    github('praqma-test/submod-red',
+    github("praqma-test/${superRedRepo}",
       { scm ->
         scm / branches / 'hudson.plugins.git.BranchSpec' {
           name 'master'
@@ -141,3 +143,24 @@ job("${repo}-release") {
     }
   }
 }
+
+Superproject.getBuildJob(job("${superGreenRepo}-build"), "praqma-test/${superGreenRepo}") {
+  steps {
+    shell('./build.sh')
+  }
+
+  publishers {
+    archiveArtifacts {
+      pattern('archive.tgz')
+    }
+  }
+}
+Superproject.getTestJob(job("${superGreenRepo}-test"), "praqma-test/${superGreenRepo}") {
+  steps {
+    copyArtifacts("${repo}-build") {
+      includePatterns('archive.tgz')
+    }
+    shell('./test.sh')
+  }
+}
+Superproject.getReleaseJob(job("${superGreenRepo}-release"), "praqma-test/${superGreenRepo}")
