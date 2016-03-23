@@ -151,16 +151,16 @@ Superproject.getBuildJob(job("${superGreenRepo}-build"), "praqma-test/${superGre
 
   publishers {
     archiveArtifacts {
-      pattern('archive.tgz')
+      pattern('output.txt')
     }
   }
 }
 Superproject.getTestJob(job("${superGreenRepo}-test"), "praqma-test/${superGreenRepo}") {
   steps {
     copyArtifacts("${superGreenRepo}-build") {
-      includePatterns('archive.tgz')
+      includePatterns('output.txt')
     }
-    shell('./test.sh')
+    shell('cat output.txt')
   }
 }
 Superproject.getReleaseJob(job("${superGreenRepo}-release"), "praqma-test/${superGreenRepo}")
