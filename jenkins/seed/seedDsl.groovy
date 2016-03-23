@@ -43,69 +43,20 @@ buildFlowJob("${repo}-build-flow") {
   }
 }
 
-Submodule.getTestJob(job('lower-letters-test'), 'praqma-test/lower-letters') {
-  steps {
-    shell('./test.sh')
-  }
-}
-
-Submodule.getReleaseJob(job('lower-letters-release'), 'praqma-test/lower-letters')
-
-job("capital-letters-test") {
-  description('Test capital-letters submodule')
-
-  scm {
-    github('praqma-test/capital-letters')
-    { scm ->
-      scm / branches / 'hudson.plugins.git.BranchSpec' {
-        name 'refs/heads/feature/1'
-      }
+/* Submodules in praqma-test.  Each is assumed to have a test.sh script. */
+submodules = [
+    'capital-letters',
+    'lower-letters',
+  ]
+submodules.each {
+  Submodule.getTestJob(job("${it}-test"), "praqma-test/${it}") {
+    steps {
+      shell('./test.sh')
     }
   }
-
-  steps {
-    shell('''\
-      git checkout master
-      git checkout feature/1
-      git merge master
-    '''.stripIndent())
-
-    shell('./test.sh')
-  }
-
+  Submodule.getReleaseJob(job("${it}-release"), "praqma-test/${it}")
 }
 
-job("capital-letters-release") {
-  description('Merge capital-letters ready branch into master')
-
-  scm {
-    github('praqma-test/capital-letters',
-      { scm ->
-        scm / branches / 'hudson.plugins.git.BranchSpec' {
-          name 'master'
-        }
-      }
-    )
-  }
-
-  /** Merge feature branch into master. */
-  steps {
-    shell('''\
-    git checkout feature/1
-    git pull
-    git checkout master
-    git merge --ff-only feature/1
-    '''.stripIndent())
-  }
-
-  /** Push to master. */
-  publishers {
-    git {
-      pushOnlyIfSuccess()
-      branch('origin', 'master')
-    }
-  }
-}
 
 job("${repo}-build") {
   description('Check out feature branch and build source code')
