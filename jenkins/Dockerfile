@@ -1,12 +1,6 @@
 FROM jenkins:1.642.2
 MAINTAINER Praqma <info@praqma.com>
 
-USER root
-# Install gcc
-RUN apt-get update && apt-get install -y build-essential
-
-USER jenkins
-
 # Install Jenkins plugins
 COPY plugins.txt /usr/share/jenkins/plugins.txt
 RUN /usr/local/bin/plugins.sh /usr/share/jenkins/plugins.txt

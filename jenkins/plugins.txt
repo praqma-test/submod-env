@@ -4,18 +4,13 @@ job-dsl:1.44
 # Git plugins and dependencies
 github:1.18.1
 github-api:1.72.1
-git:2.4.3
+git:2.4.4
 git-client:1.19.6
-credentials:1.25
+credentials:1.26
 icon-shim:2.0.3
 plain-credentials:1.1
 scm-api:1.1
 token-macro:1.12.1
-
-# Build pipeline
-build-pipeline-plugin:1.5.1
-parameterized-trigger:2.30
-jquery:1.11.2-0
 
 # Build flow
 build-flow-plugin:0.18
