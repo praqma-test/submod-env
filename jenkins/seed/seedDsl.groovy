@@ -2,68 +2,26 @@
 import utilities.Submodule
 import utilities.Superproject
 
-/* The superprojects, located in praqma-test. */
-superRedRepo = 'super-red'
-superGreenRepo = 'super-green'
+/**
+ * Create build pipelines for Git 'superprojects', i.e., projects using submodules.
+ * The flow of a superproject pipeline is:
+ *
+ * <ul>
+ * <li> Trigger a pipeline build on SCM changes on a superproject branch. </li>
+ * <li> In parallel, build and test all submodules used by the superproject. This is done
+ * on branches with the same name (but in the context of a submodule's repository).
+ * If successful, changes to a submodule are fast-forward merged to the submodule's
+ * master branch of. </li>
+ * <li> Test the superproject. If successful, changes to the superproject are fast-forward
+ * merged to the superproject's master branch. </li>
+ * </ul>
+ */
 
-/* The build flow pipeline for the super-red superproject. */
-buildFlowJob("${superRedRepo}-build-flow") {
-  buildNeedsWorkspace() // In order to detect SCM changes
 
-  buildFlow("""\
-  parallel (
-    {
-      build('lower-letters-test')
-      build('lower-letters-release')
-    },
-    {
-      build('capital-letters-test')
-      build('capital-letters-release')
-    },
-  )
-
-  build('${superRedRepo}-build')
-  build('${superRedRepo}-test')
-  build('${superRedRepo}-release')
-  """.stripIndent())
-
-  scm {
-    github("praqma-test/${superRedRepo}",
-      { scm ->
-        scm / branches / 'hudson.plugins.git.BranchSpec' {
-          name 'refs/heads/feature/1'
-        }
-        scm / 'extensions' / 'hudson.plugins.git.extensions.impl.SubmoduleOption' {
-          disableSubmodules false
-          recursiveSubmodules true
-          trackingSubmodules false
-        }
-      }
-    )
-  }
-
-  triggers {
-    scm('H/2 * * * *')
-  }
-}
-
-/* The build flow pipeline for the super-green superproject. */
-Superproject.getBuildFlow(buildFlowJob("${superGreenRepo}-build-flow"), superGreenRepo,
-  """\
-  parallel (
-    {
-      build('lower-letters-test')
-      build('lower-letters-release')
-    },
-  )
-
-  build('${superGreenRepo}-build')
-  build('${superGreenRepo}-test')
-  build('${superGreenRepo}-release')
-  """.stripIndent()
-)
-
-/* Submodules in praqma-test.  Each is assumed to have a test.sh script. */
+/**
+ * Submodules in praqma-test used by one or more superprojects.
+ * Each is assumed to have a test.sh script.
+ */
 submodules = [
     'capital-letters',
     'lower-letters',
@@ -76,6 +34,11 @@ submodules.each {
   }
   Submodule.getReleaseJob(job("${it}-release"), "praqma-test/${it}")
 }
+
+
+/* The superprojects, located in praqma-test. */
+superRedRepo = 'super-red'
+superGreenRepo = 'super-green'
 
 
 /* Superproject: praqma-test/super-red */
@@ -100,6 +63,24 @@ Superproject.getTestJob(job("${superRedRepo}-test"), "praqma-test/${superRedRepo
   }
 }
 Superproject.getReleaseJob(job("${superRedRepo}-release"), "praqma-test/${superRedRepo}")
+Superproject.getBuildFlow(buildFlowJob("${superRedRepo}-build-flow"), "praqma-test/${superRedRepo}",
+  """\
+  parallel (
+    {
+      build('lower-letters-test')
+      build('lower-letters-release')
+    },
+    {
+      build('capital-letters-test')
+      build('capital-letters-release')
+    },
+  )
+
+  build('${superRedRepo}-build')
+  build('${superRedRepo}-test')
+  build('${superRedRepo}-release')
+  """.stripIndent()
+)
 
 
 /* Superproject: praqma-test/super-green */
@@ -123,3 +104,17 @@ Superproject.getTestJob(job("${superGreenRepo}-test"), "praqma-test/${superGreen
   }
 }
 Superproject.getReleaseJob(job("${superGreenRepo}-release"), "praqma-test/${superGreenRepo}")
+Superproject.getBuildFlow(buildFlowJob("${superGreenRepo}-build-flow"), "praqma-test/${superGreenRepo}",
+  """\
+  parallel (
+    {
+      build('lower-letters-test')
+      build('lower-letters-release')
+    },
+  )
+
+  build('${superGreenRepo}-build')
+  build('${superGreenRepo}-test')
+  build('${superGreenRepo}-release')
+  """.stripIndent()
+)

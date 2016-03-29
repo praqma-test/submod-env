@@ -104,31 +104,30 @@ public class Superproject {
   }
 
   /**
-   * Create a build flow pipeline job.
+   * Create a build flow pipeline job. The pipeline uses a fixed (feature) branch and
+   * a fixed polling trigger.
    *
    * @param buildFlowJob Initial build flow job with a name.
-   * @param praqmaTestRepo GitHub repository name, relative to praqma-test.
+   * @param repo GitHub repository name.
    * @param flowDsl Build flow DSL string.
    */
-  static def getBuildFlow(def buildFlowJob, def praqmaTestRepo, def flowDsl) {
+  static def getBuildFlow(def buildFlowJob, def repo, def flowDsl) {
     buildFlowJob.with {
       buildNeedsWorkspace() // In order to detect SCM changes
 
       buildFlow(flowDsl)
 
       scm {
-        github("praqma-test/${praqmaTestRepo}",
-          { scm ->
-            scm / branches / 'hudson.plugins.git.BranchSpec' {
-              name 'refs/heads/feature/1'
-            }
-            scm / 'extensions' / 'hudson.plugins.git.extensions.impl.SubmoduleOption' {
-              disableSubmodules false
-              recursiveSubmodules true
-              trackingSubmodules false
-            }
+        github(repo) { scm ->
+          scm / branches / 'hudson.plugins.git.BranchSpec' {
+            name 'refs/heads/feature/1'
           }
-        )
+          scm / 'extensions' / 'hudson.plugins.git.extensions.impl.SubmoduleOption' {
+            disableSubmodules false
+            recursiveSubmodules true
+            trackingSubmodules false
+          }
+        }
       }
 
       triggers {

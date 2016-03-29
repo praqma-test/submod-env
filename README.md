@@ -1,6 +1,21 @@
 # submod-env
 
-Continuous delivery environment for the submodule test setup.
+Continuous delivery environment for a Git submodule test setup.
+
+
+## Overview
+
+This project is used to create and exercise build pipelines for Git 'superprojects',
+that is, projects using submodules.
+
+The project uses Jenkins and Job DSL to create pipelines for two superprojects:
+
+* [super-red](../super-red)
+* [super-green](../super-green)
+
+Each superproject uses one or more submodules also located in `praqma-test`.
+A submodules is used by one or more superprojects.
+
 
 ## Usage
 
@@ -18,5 +33,6 @@ Now Jenkins runs on `http://$(docker-machine ip default):8080`.
 You then need to manually configure it with credentials to push to GitHub:
 
 * Add credentials in Jenkins, for example with the name `github-push`.
-* Edit the configuration of the release jobs to use the credentials in the
+* Run the seed job to create all jobs.
+* Edit the configuration of all `release` jobs to use the credentials in the
   __Source Code Management__ section.
