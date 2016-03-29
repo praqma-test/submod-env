@@ -10,11 +10,11 @@ that is, projects using submodules.
 
 The project uses Jenkins and Job DSL to create pipelines for these superprojects:
 
-* [super-red](https://github.com/praqma-test/super-red)
-* [super-green](https://github.com/praqma-test/super-green)
+* [praqma-test/super-red](https://github.com/praqma-test/super-red)
+* [praqma-test/super-green](https://github.com/praqma-test/super-green)
 
 Each superproject uses one or more submodules also located in `praqma-test`.
-A submodules is used by one or more superprojects.
+A submodule is used by one or more superprojects.
 
 
 ## Usage
