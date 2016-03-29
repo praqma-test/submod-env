@@ -48,7 +48,8 @@ buildFlowJob("${superRedRepo}-build-flow") {
 }
 
 /* The build flow pipeline for the super-green superproject. */
-Superproject.getBuildFlow(superGreenRepo, """\
+Superproject.getBuildFlow(buildFlowJob("${superGreenRepo}-build-flow"), superGreenRepo,
+  """\
   parallel (
     {
       build('lower-letters-test')

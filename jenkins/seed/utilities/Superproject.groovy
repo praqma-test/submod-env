@@ -106,11 +106,12 @@ public class Superproject {
   /**
    * Create a build flow pipeline job.
    *
+   * @param buildFlowJob Initial build flow job with a name.
    * @param praqmaTestRepo GitHub repository name, relative to praqma-test.
    * @param flowDsl Build flow DSL string.
    */
-  static def getBuildFlow(def praqmaTestRepo, def flowDsl) {
-    buildFlowJob("${praqmaTestRepo}-build-flow") {
+  static def getBuildFlow(def buildFlowJob, def praqmaTestRepo, def flowDsl) {
+    buildFlowJob.with {
       buildNeedsWorkspace() // In order to detect SCM changes
 
       buildFlow(flowDsl)
