@@ -8,10 +8,10 @@ Continuous delivery environment for a Git submodule test setup.
 This project is used to create and exercise build pipelines for Git 'superprojects',
 that is, projects using submodules.
 
-The project uses Jenkins and Job DSL to create pipelines for two superprojects:
+The project uses Jenkins and Job DSL to create pipelines for these superprojects:
 
-* [super-red](../super-red)
-* [super-green](../super-green)
+* [super-red](https://github.com/praqma-test/super-red)
+* [super-green](https://github.com/praqma-test/super-green)
 
 Each superproject uses one or more submodules also located in `praqma-test`.
 A submodules is used by one or more superprojects.
