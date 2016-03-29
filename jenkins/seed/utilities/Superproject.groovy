@@ -130,9 +130,10 @@ public class Superproject {
         }
       }
 
-      triggers {
-        scm('H/2 * * * *')
-      }
+      // Disable triggering the pipelines as long as GitHub push credentials are not automated
+      //triggers {
+      //  scm('H/2 * * * *')
+      //}
     }
   }
 

@@ -3,22 +3,6 @@ import utilities.Submodule
 import utilities.Superproject
 
 /**
- * Create build pipelines for Git 'superprojects', i.e., projects using submodules.
- * The flow of a superproject pipeline is:
- *
- * <ul>
- * <li> Trigger a pipeline build on SCM changes on a superproject branch. </li>
- * <li> In parallel, build and test all submodules used by the superproject. This is done
- * on branches with the same name (but in the context of a submodule's repository).
- * If successful, changes to a submodule are fast-forward merged to the submodule's
- * master branch of. </li>
- * <li> Test the superproject. If successful, changes to the superproject are fast-forward
- * merged to the superproject's master branch. </li>
- * </ul>
- */
-
-
-/**
  * Submodules in praqma-test used by one or more superprojects.
  * Each is assumed to have a test.sh script.
  */
