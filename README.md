@@ -1,6 +1,6 @@
 # submod-env
 
-Continuous delivery environment for a Git submodule test setup.
+A continuous delivery environment for a Git submodule test setup.
 
 
 ## Overview
@@ -33,6 +33,8 @@ The flow of a superproject pipeline is:
   * If successful, changes to a submodule are fast-forward merged to the submodule's master branch
 * Test the superproject
   * If successful, changes to the superproject are fast-forward merged to the superproject's master branch
+
+![Pipeline for the super-red project](doc/super-red-flow.png)
 
 
 ## Creating the environment
@@ -67,7 +69,7 @@ This assumes that Jenkins is configured with a build trigger to pick up SCM chan
 feature branch.
 
 ```sh
-$ git clone https://github.com/praqma-test/submod-env.git # to get set-aliases.sh
+$ git clone https://github.com/praqma-test/submod-env.git # to get custom git aliases
 $ git clone https://github.com/praqma-test/super-red.git  # example superproject
 $
 $ cd super-red
@@ -81,10 +83,19 @@ $ git commitall                  # commit recursively
 $ git pushall                    # push recursively
 ```
 
-When Jenkins picks up the changes, it starts the build flow pipeline for the superproject.
+Jenkins should then pick up the changes and start the build flow pipeline for the superproject.
 The submodule parts of the pipeline should merge changes to the `master` branch of the
 submodules. Then, the superproject part of the pipeline should do the same for the
 superproject.
 
 Following that, another developer should be able to fetch all changes from `master` into
 another feature branch.
+
+### Breaking the build
+
+If you want to test that a bad commit on a feature branch does not end up on `master`,
+you can break the pipeline by adding uppercase letters to `lower-letters/text.txt` or
+lowercase letters to `capital-letters/text.txt`.
+
+This should cause the respective submodule test job to fail, thus failing an entire
+superproject pipeline.
