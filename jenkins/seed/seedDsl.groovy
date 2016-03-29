@@ -102,8 +102,8 @@ job("${superRedRepo}-test") {
     copyArtifacts("${superRedRepo}-build") {
       includePatterns('archive.tgz')
     }
-
-    shell('./test.sh')
+    // Just test that it looks like a tar archive.
+    shell('tar -tvf archive.tgz')
   }
 }
 
