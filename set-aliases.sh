@@ -2,6 +2,9 @@
 ## Set Git aliases (local to a repository).
 ## Should be run at the root of a superproject.
 
+## This blog post describes the concept of using shell functions in aliases:
+## http://blogs.atlassian.com/2014/10/advanced-git-aliases/
+
 # Pull all remote changes to the superproject
 # and all submodules.
 # Use 'git rev-parse' to get the branch name, such that the same branch is pulled
